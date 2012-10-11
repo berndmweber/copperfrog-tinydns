@@ -1,0 +1,20 @@
+{
+  "name": "copperfrog-tinydns",
+  "author": "Copper Frog LLC.",
+  "description": "This module instantiates a tinyDNS and DNSCache instance on a Ubuntu server.\nIt has been tested with Ubuntu 10.04 LTS\n\nSee source code for method and member/variable explanation.",
+  "license": "GPL V2",
+  "project_page": "https://github.com/bernd-copperfroghosting/copperfrog-tinydns",
+  "source": "",
+  "summary": "Puppet module to instantiate a tinydns server on Ubuntu",
+  "version": "1.0.0",
+  "checksums": {
+    "Modulefile": "f5fc3320035817e91a64f49de69fd3d3",
+    "README.md": "76bb21c4ede021985c3ace8cf1c8c6b9",
+    "lib/augeas/lenses/tinydns_data.aug": "218fca69fe6362f52b1460e4f24c2455",
+    "manifests/init.pp": "12c41fdf23e693c78a7e33ddbd9f562a",
+    "manifests/yourdomain_net.pp": "a955b4ea411343b5b700eb7f79a8f466",
+    "tests/init.pp": "28a53065b15efca521794caf7f0f047f",
+    "tests/yourdomain_net.pp": "dc373d0513e1ff98df05b0cfe1d2307f"
+  },
+  "dependencies": []
+}
