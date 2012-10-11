@@ -1,3 +1,7 @@
+# Install the necessary packages to make tinyDNS work.
+#
+# This ONLY works for Ubuntu right now!
+#
 class tinydns::install {
   case $::operatingsystem {
     'Ubuntu' : {
@@ -15,6 +19,19 @@ class tinydns::install {
   }
 }
 
+# This method adds a DNS entry depending on it's given type.
+# The $name is unique in the DNS list. If the name needs to change you first
+# need to remove the entry and then add a new one.
+#
+# $name : The unique FQDN of the server
+# $type : DNS entry type
+#         - host : host entry (main entry for an IP), e.g. server1.yourdomain.net
+#         - alias : alias entry (secondary entries for an IP),
+#                   e.g. mail.yourdomain.net -> server1.yourdomain.net
+#         - ns : Namespace entry, e.g. 10.10.10.in-addr.arpa
+# $ip : The IP address to point DNS entry to, e.g. 10.10.10.123
+# $expiry : Expiry time of an entry in cache in seconds, e.g. 3600
+#
 define tinydns::add_dns_entry ( $type, $ip, $expiry ) {
   Exec {
     path => "${tinydns::tinydns_root_dir}:.:/bin:/sbin:/usr/bin:/usr/sbin",
@@ -59,13 +76,15 @@ define tinydns::add_dns_entry ( $type, $ip, $expiry ) {
       }
       file { "${tinydns::dnscache_servers_dir}/${name}" :
         ensure => file,
-        content => "127.0.0.1\n10.10.20.4\n",
+        content => "127.0.0.1\n${tinydns::tinydns_self_ip}\n",
         mode => 0644,
       }
     }
   }
 }
 
+# This method removes a DNS entry from the list based on the unique $name (FQDN)
+#
 define tinydns::rem_dns_entry () {
   augeas { "remove-dns-entry-${name}" :
     context => "/files${tinydns::tinydns_data}",
@@ -77,6 +96,13 @@ define tinydns::rem_dns_entry () {
   }
 }
 
+# Configure tinyDNS with an external IP
+#
+# This ONLY works for Ubuntu right now!
+#
+# $external_IP : DNS external facing IP if necessary; For LAN facing DNS servers
+#                this will be 127.0.0.1, which is the default setting
+#
 class tinydns::configure ( $external_IP ) {
   case $::operatingsystem {
     'Ubuntu' : {
@@ -115,7 +141,9 @@ class tinydns::configure ( $external_IP ) {
       file { $tinydns::dnscache_svc :
         ensure => link,
         target => $tinydns::dnscache_install_path,
-        require => [ Exec [ 'configure-dnscache-IP', 'configure-tinydns-IP' ], File [ '/etc/service' ] ],
+        require => [ Exec [ 'configure-dnscache-IP', 'configure-tinydns-IP' ],
+                     File [ '/etc/service' ]
+                   ],
       }
       file { [ $tinydns::dnscache_root_dir,
                $tinydns::dnscache_ip_dir,
@@ -123,7 +151,7 @@ class tinydns::configure ( $external_IP ) {
              ] :
         ensure => directory,
       }
-      file { "${tinydns::dnscache_ip_dir}/127.0.0.1" :
+      file { "${tinydns::dnscache_ip_dir}/${external_IP}" :
         ensure => file,
         mode => 0600,
       }
@@ -131,6 +159,12 @@ class tinydns::configure ( $external_IP ) {
   }
 }
 
+# Method to define an additional subnet access for tinyDNS
+#
+# See tinydns::add_dns_entry above -> type == ns
+#
+# $name : Subnet IP-range, e.g. 10.10.10
+#
 define tinydns::enable_subnet_access () {
   file { "${tinydns::dnscache_ip_dir}/${name}" :
     ensure => file,
@@ -139,6 +173,8 @@ define tinydns::enable_subnet_access () {
   }
 }
 
+# Enable the tinyDNS server and DNSCache
+#
 class tinydns::service {
   Exec {
     path => "/bin:/sbin:/usr/bin:/usr/sbin",
@@ -181,13 +217,31 @@ class tinydns::service {
   }
 }
 
-class tinydns ( $external_IP = '127.0.0.1' ) {
+# Super class for tinyDNS - handles global and class variables
+#
+# $external_IP : DNS external facing IP if necessary; For LAN facing DNS servers
+#                this will be 127.0.0.1, which is the default setting
+# $server_IP : The DNS servers own IP, e.g. 10.10.10.4
+#
+class tinydns (
+  $external_ip = "127.0.0.1",
+  $server_ip = "10.10.10.4",
+) {
+  # This allows for global variables assigned through the Puppet Enterprise
+  # console -> tinydns_ext_ip, tinydns_server_ip
   if $::tinydns_ext_ip != undef {
     $t_external_IP = $::tinydns_ext_ip
   } else {
-    $t_external_IP = $external_IP
+    $t_external_IP = $external_ip
+  }
+  if $::tinydns_server_ip != undef {
+    $t_server_IP = $::tinydns_server_ip
+  } else {
+    $t_server_IP = $server_ip
   }
 
+  # Class wide variables
+  $tinydns_self_ip = $t_server_IP
   $tinydns_svc = '/etc/service/tinydns'
   $tinydns_install_path = '/var/lib/tinydns'
   $tinydns_root_dir = "${tinydns_install_path}/root"
