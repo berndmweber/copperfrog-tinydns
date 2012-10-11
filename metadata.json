@@ -15,6 +15,5 @@
     "manifests/yourdomain_net.pp": "a955b4ea411343b5b700eb7f79a8f466",
     "tests/init.pp": "28a53065b15efca521794caf7f0f047f",
     "tests/yourdomain_net.pp": "dc373d0513e1ff98df05b0cfe1d2307f"
-  },
-  "dependencies": []
+  }
 }
