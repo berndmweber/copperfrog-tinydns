@@ -1,5 +1,5 @@
 name 'copperfrog-tinydns'
-version '1.0.0'
+version '1.0.1'
 
 author 'Copper Frog LLC.'
 license 'GPL V2'

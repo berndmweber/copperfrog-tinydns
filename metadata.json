@@ -6,14 +6,15 @@
   "project_page": "https://github.com/bernd-copperfroghosting/copperfrog-tinydns",
   "source": "",
   "summary": "Puppet module to instantiate a tinydns server on Ubuntu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "checksums": {
-    "Modulefile": "f5fc3320035817e91a64f49de69fd3d3",
+    "Modulefile": "c9923eaf559d03752391be6d58528988",
     "README.md": "76bb21c4ede021985c3ace8cf1c8c6b9",
     "lib/augeas/lenses/tinydns_data.aug": "218fca69fe6362f52b1460e4f24c2455",
-    "manifests/init.pp": "12c41fdf23e693c78a7e33ddbd9f562a",
+    "manifests/init.pp": "b886119a72eddb4a9e84fc44be796fab",
     "manifests/yourdomain_net.pp": "a955b4ea411343b5b700eb7f79a8f466",
     "tests/init.pp": "28a53065b15efca521794caf7f0f047f",
     "tests/yourdomain_net.pp": "dc373d0513e1ff98df05b0cfe1d2307f"
-  }
+  },
+  "dependencies": []
 }
