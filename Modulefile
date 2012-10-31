@@ -9,4 +9,7 @@ summary 'Puppet module to instantiate a tinydns server on Ubuntu'
 description 'This module instantiates a tinyDNS and DNSCache instance on a Ubuntu server.
 It has been tested with Ubuntu 10.04 LTS
 
-See source code for method and member/variable explanation.'
+See source code for method and member/variable explanation.
+
+See additional documention here:
+http://www.copperfroghosting.com/blog/tinydns-puppet-module'
